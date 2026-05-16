@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Summarecon EcoRide - Ride Clean, Earn Rewards</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface-container-highest": "#e2e2e2",
+          "primary-container": "#2e7d32",
+          "primary-fixed": "#a3f69c",
+          "on-secondary": "#ffffff",
+          "inverse-primary": "#88d982",
+          "primary-fixed-dim": "#88d982",
+          "inverse-surface": "#2f3131",
+          "surface-container": "#eeeeee",
+          "on-error-container": "#93000a",
+          "on-error": "#ffffff",
+          "background": "#f9f9f9",
+          "surface-variant": "#e2e2e2",
+          "surface-container-lowest": "#ffffff",
+          "on-surface": "#1a1c1c",
+          "surface-dim": "#dadada",
+          "secondary-container": "#54a0fe",
+          "on-surface-variant": "#40493d",
+          "tertiary": "#6e5100",
+          "secondary-fixed-dim": "#a5c8ff",
+          "on-secondary-container": "#003567",
+          "outline-variant": "#bfcaba",
+          "on-primary-container": "#cbffc2",
+          "surface-tint": "#1b6d24",
+          "surface": "#f9f9f9",
+          "primary": "#0d631b",
+          "on-background": "#1a1c1c",
+          "secondary-fixed": "#d4e3ff",
+          "on-tertiary": "#ffffff",
+          "error-container": "#ffdad6",
+          "on-primary": "#ffffff",
+          "on-primary-fixed": "#002204",
+          "tertiary-fixed": "#ffdfa0",
+          "on-tertiary-fixed-variant": "#5c4300",
+          "on-secondary-fixed": "#001c3a",
+          "outline": "#707a6c",
+          "on-secondary-fixed-variant": "#004786",
+          "surface-bright": "#f9f9f9",
+          "secondary": "#005faf",
+          "tertiary-container": "#8c6800",
+          "surface-container-high": "#e8e8e8",
+          "error": "#ba1a1a",
+          "on-tertiary-container": "#ffefd7",
+          "on-primary-fixed-variant": "#005312",
+          "inverse-on-surface": "#f1f1f1",
+          "tertiary-fixed-dim": "#f8bd2a",
+          "on-tertiary-fixed": "#261a00",
+          "surface-container-low": "#f3f3f3"
+        },
+        borderRadius: {
+          "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"
+        },
+        spacing: {
+          "xl": "80px", "xs": "4px", "lg": "48px", "base": "8px",
+          "sm": "12px", "md": "24px", "margin-mobile": "20px",
+          "margin-desktop": "64px", "gutter": "16px"
+        },
+        fontSize: {
+          "headline-lg": ["32px", {lineHeight:"40px", fontWeight:"700"}],
+          "headline-lg-mobile": ["24px", {lineHeight:"32px", fontWeight:"700"}],
+          "body-lg": ["18px", {lineHeight:"28px", fontWeight:"400"}],
+          "headline-md": ["24px", {lineHeight:"32px", fontWeight:"600"}],
+          "body-md": ["16px", {lineHeight:"24px", fontWeight:"400"}],
+          "label-sm": ["12px", {lineHeight:"16px", fontWeight:"500"}],
+          "label-md": ["14px", {lineHeight:"20px", letterSpacing:"0.01em", fontWeight:"600"}],
+          "display-lg": ["48px", {lineHeight:"56px", letterSpacing:"-0.02em", fontWeight:"700"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+  .mat-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+  /* Page system */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* Transitions */
+  .fade-in { animation: fadeIn 0.3s ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+
+  /* Toggle switch */
+  .toggle-track { width:44px; height:24px; border-radius:12px; transition: background 0.2s; position:relative; cursor:pointer; }
+  .toggle-thumb { width:18px; height:18px; border-radius:9px; background:#fff; position:absolute; top:3px; left:3px; transition: left 0.2s; }
+  .toggle-on .toggle-track { background: #2e7d32; }
+  .toggle-on .toggle-thumb { left:23px; }
+  .toggle-off .toggle-track { background:#bfcaba; }
+
+  /* Map placeholder */
+  .map-bg {
+    background: linear-gradient(135deg, #d4e8d3 0%, #b8d4b7 30%, #c8d8c0 60%, #d8e4d0 100%);
+    position: relative; overflow: hidden;
+  }
+  .map-bg::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 40px);
+  }
+  .map-road-h { position:absolute; height:8px; background:rgba(255,255,255,0.6); border-radius:4px; }
+  .map-road-v { position:absolute; width:8px; background:rgba(255,255,255,0.6); border-radius:4px; }
+
+  /* Modal */
+  .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center; }
+  .modal-backdrop.open { display:flex; }
+  .modal-box { background:#fff; border-radius:1.5rem; padding:2rem; max-width:400px; width:90%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: fadeIn 0.25s ease; }
+
+  /* Bottom sheet */
+  .bottom-sheet { display:none; position:fixed; bottom:0; left:0; right:0; z-index:150; background:#fff; border-radius:1.5rem 1.5rem 0 0; padding:1.5rem; box-shadow:0 -8px 40px rgba(0,0,0,0.15); transform: translateY(100%); transition: transform 0.3s ease; }
+  .bottom-sheet.open { display:block; transform: translateY(0); }
+
+  /* Ride timer */
+  .ride-timer { font-variant-numeric: tabular-nums; }
+
+  /* Toast */
+  .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(100px); background:#1a1c1c; color:#fff; padding:12px 20px; border-radius:100px; font-size:14px; font-weight:600; z-index:300; opacity:0; transition: all 0.3s; white-space:nowrap; }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+  /* Notification badge */
+  .notif-badge { position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:#ba1a1a; border-radius:50%; border:2px solid #f9f9f9; }
+
+  /* Hub marker pulse */
+  .hub-marker { position:absolute; cursor:pointer; }
+  .hub-pulse { animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(13,99,27,0.4);} 50%{box-shadow:0 0 0 12px rgba(13,99,27,0);} }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-track { background:#f1f1f1; } ::-webkit-scrollbar-thumb { background:#bfcaba; border-radius:3px; }
+
+  /* Active nav highlight */
+  .nav-active { color: #0d631b; font-weight: 700; }
+  .nav-link { color: #40493d; }
+
+  /* Mobile bottom nav height spacer */
+  .mobile-spacer { height: 72px; }
+
+  @media (min-width: 768px) { .mobile-spacer { height: 0; } }
+</style>
+</head>
+<body class="bg-background text-on-surface">
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== GLOBAL HEADER ===== -->
+<header class="fixed top-0 left-0 w-full z-[100] flex justify-between items-center px-4 md:px-16 py-3 bg-surface/90 backdrop-blur-md shadow-sm" id="globalHeader">
+  <div class="flex items-center gap-6">
+    <button onclick="navigateTo('home')" class="font-bold text-primary text-lg md:text-2xl tracking-tight">Summarecon EcoRide</button>
+    <nav class="hidden md:flex items-center gap-1" id="desktopNav">
+      <button onclick="navigateTo('home')" class="nav-btn px-3 py-2 rounded-full font-semibold text-sm transition-colors" data-page="home">Home</button>
+      <button onclick="navigateTo('explore')" class="nav-btn px-3 py-2 rounded-full font-semibold text-sm transition-colors" data-page="explore">Explore</button>
+      <button onclick="navigateTo('recycle')" class="nav-btn px-3 py-2 rounded-full font-semibold text-sm transition-colors" data-page="recycle">Recycle</button>
+      <button onclick="navigateTo('profile')" class="nav-btn px-3 py-2 rounded-full font-semibold text-sm transition-colors" data-page="profile">Profile</button>
+    </nav>
+  </div>
+  <div class="flex items-center gap-2 md:gap-4" id="headerRight">
+    <!-- Logged out state -->
+    <div id="headerGuest" class="">
+      <button onclick="navigateTo('login')" class="bg-primary text-on-primary font-semibold text-sm px-4 py-2 md:px-6 md:py-2.5 rounded-full active:scale-95 transition-transform">
+        Masuk / Daftar
+      </button>
+    </div>
+    <!-- Logged in state -->
+    <div id="headerUser" class="hidden flex items-center gap-2">
+      <div class="relative">
+        <button onclick="toggleNotifPanel()" class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+          <span class="material-symbols-outlined">notifications</span>
+          <div class="notif-badge" id="notifBadge"></div>
+        </button>
+      </div>
+      <button onclick="navigateTo('profile')" class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+        <span class="material-symbols-outlined">account_balance_wallet</span>
+      </button>
+      <button onclick="navigateTo('profile')" class="w-9 h-9 rounded-full overflow-hidden border-2 border-outline-variant bg-primary-fixed flex items-center justify-center text-primary font-bold text-sm">
+        AW
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Notif Panel -->
+<div id="notifPanel" class="hidden fixed top-16 right-4 md:right-16 z-[110] bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant w-80 p-4">
+  <div class="flex justify-between items-center mb-3">
+    <h3 class="font-semibold text-on-surface">Notifikasi</h3>
+    <button onclick="toggleNotifPanel()" class="text-outline text-xs">Tutup</button>
+  </div>
+  <div class="space-y-2">
+    <div class="flex gap-3 p-2 hover:bg-surface-container rounded-xl transition-colors cursor-pointer">
+      <div class="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-primary flex-shrink-0">
+        <span class="material-symbols-outlined text-sm">recycling</span>
+      </div>
+      <div><p class="text-sm font-semibold text-on-surface">Poin Recycle Diterima</p><p class="text-xs text-on-surface-variant">+510 poin ditambahkan ke akunmu</p></div>
+    </div>
+    <div class="flex gap-3 p-2 hover:bg-surface-container rounded-xl transition-colors cursor-pointer">
+      <div class="w-9 h-9 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary flex-shrink-0">
+        <span class="material-symbols-outlined text-sm">directions_bike</span>
+      </div>
+      <div><p class="text-sm font-semibold text-on-surface">Perjalanan Selesai</p><p class="text-xs text-on-surface-variant">Ride #EK-2041 telah berakhir • 3.2 km</p></div>
+    </div>
+    <div class="flex gap-3 p-2 hover:bg-surface-container rounded-xl transition-colors cursor-pointer">
+      <div class="w-9 h-9 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary flex-shrink-0">
+        <span class="material-symbols-outlined text-sm">local_offer</span>
+      </div>
+      <div><p class="text-sm font-semibold text-on-surface">Promo Weekend Warrior</p><p class="text-xs text-on-surface-variant">Rides tak terbatas hanya 50k/hari!</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: HOME ===== -->
+<div class="page active" id="page-home">
+  <!-- Hero -->
+  <section class="relative min-h-[85vh] flex items-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img src="https://lh3.googleusercontent.com/aida/ADBb0ugvg6QQZlRX4I6Bc30eTiPGRPSgj8NamTXIn58gBacXkcVS1LA4x9AMp53Ht4qhTPC4GAJCf66lGO-4kRhLcSe0utxbluCXMKOTi9Hl6ACTN5-UrmqsIFMBqMPnOB-GTKtezYbY1IZKKJzzyJWuDrmzDeORcV1Sav5AQtPpApY0I7LzX73kyN3CduAeL0ssbcLw7vrGo6U70wzBjgn3RIUYcYHVFu5FOy9HYohErnnWtG5c6W88F6iIYji2" alt="EcoRide E-Bike" class="w-full h-full object-cover"/>
+      <div class="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent"></div>
+    </div>
+    <div class="relative z-10 px-5 md:px-16 w-full max-w-2xl pt-20 pb-10">
+      <span class="inline-block bg-primary-fixed text-on-primary-fixed text-xs font-bold px-3 py-1 rounded-full mb-4 tracking-wider uppercase">Summarecon Bekasi</span>
+      <h1 class="text-4xl md:text-[48px] font-bold leading-tight text-on-background mb-6" style="letter-spacing:-0.02em">Ride Into a<br/>Greener Future.</h1>
+      <p class="text-base md:text-lg text-on-surface-variant mb-8 leading-relaxed max-w-md">
+        Sewa e-bike premium di Summarecon Bekasi. Daur ulang sampahmu untuk mendapatkan kredit perjalanan. Simpel, bersih, dan menguntungkan.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <button onclick="handleStartRide()" class="bg-primary text-on-primary font-semibold px-6 py-3 md:px-8 md:py-4 rounded-xl shadow-lg hover:bg-primary/90 transition-all flex items-center gap-2 active:scale-95">
+          <span class="material-symbols-outlined">directions_bike</span> Mulai Perjalanan
+        </button>
+        <button onclick="navigateTo('explore')" class="border-2 border-primary text-primary font-semibold px-6 py-3 md:px-8 md:py-4 rounded-xl hover:bg-primary/5 transition-all active:scale-95">
+          Temukan Hub
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works -->
+  <section class="px-5 md:px-16 py-16 bg-surface-container-low">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <!-- How it Works Card -->
+      <div class="lg:col-span-7 bg-surface-container-lowest p-8 md:p-12 rounded-[2rem] shadow-sm flex flex-col">
+        <span class="text-secondary font-semibold text-sm mb-2">The EcoSystem</span>
+        <h2 class="text-2xl md:text-3xl font-bold mb-8">Cara Kerja EcoRide</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined">qr_code_scanner</span>
+            </div>
+            <h3 class="font-semibold text-sm">Scan & Buka Kunci</h3>
+            <p class="text-on-surface-variant text-xs leading-relaxed">Temukan sepeda di hub Summarecon dan scan untuk memulai.</p>
+          </div>
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary">
+              <span class="material-symbols-outlined">recycling</span>
+            </div>
+            <h3 class="font-semibold text-sm">Daur Ulang Plastik</h3>
+            <p class="text-on-surface-variant text-xs leading-relaxed">Masukkan botol di tempat sampah IoT kami untuk mendapatkan kredit.</p>
+          </div>
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary">
+              <span class="material-symbols-outlined">electric_bolt</span>
+            </div>
+            <h3 class="font-semibold text-sm">Tenaga Listrik Murni</h3>
+            <p class="text-on-surface-variant text-xs leading-relaxed">Nikmati bantuan motor listrik bertenaga tinggi di seluruh Bekasi.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Point Exchange Card -->
+      <div class="lg:col-span-5 bg-primary-container text-on-primary-container p-8 rounded-[2rem] shadow-lg flex flex-col justify-between relative overflow-hidden">
+        <div class="relative z-10">
+          <h2 class="text-2xl md:text-3xl font-bold mb-2">Tukar Poin</h2>
+          <p class="text-sm opacity-90 mb-6">Kontribusi hijaumu sangat berarti. Konversi poin daur ulang ke reward premium.</p>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-3 bg-white/10 rounded-xl">
+              <span class="font-semibold text-sm">50 Poin</span>
+              <span class="font-semibold text-sm">Ride 15 Menit</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-white/10 rounded-xl">
+              <span class="font-semibold text-sm">200 Poin</span>
+              <span class="font-semibold text-sm">Day Pass</span>
+            </div>
+            <button onclick="showToast('Fitur hadiah eksklusif segera hadir!')" class="w-full flex items-center justify-between p-3 bg-primary-fixed text-on-primary-fixed rounded-xl hover:opacity-90 transition-opacity active:scale-95">
+              <span class="font-semibold text-sm">Hadiah Eksklusif</span>
+              <span class="material-symbols-outlined text-sm">chevron_right</span>
+            </button>
+          </div>
+        </div>
+        <div class="absolute -bottom-8 -right-8 opacity-20">
+          <span class="material-symbols-outlined" style="font-size:120px">redeem</span>
+        </div>
+      </div>
+
+      <!-- Promo 1 -->
+      <div class="lg:col-span-4 bg-surface-container-highest rounded-[2rem] h-[280px] md:h-[300px] flex flex-col justify-end relative overflow-hidden group cursor-pointer" onclick="showToast('Armada 2024 kini tersedia di semua hub!')">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMGXE-nZ0rKfuept-I4x5jkhYuFm7mTlO-1BlwtZAfcqoqouymjf8P1Q5RNvRXrIBL79ZMVug2P13JcKmsf_1JQ3c5k7stGpIEzNPzfgTQI2EieMjQZgp2TniBaNKjr3PsqpVjQYwMuRjwVTFfGFJdw7-TKhMdMJNn2EDOYqMB4IuXCkN0Aiqs9Ren2BrK3YM9CaQDoP3VT6i3JnpQ6UcjOWxhrai-3Eoa94h2CuiO4s4yvZ-aCOVevr0hY80f2N8P-PF4xd5wvyja" alt="Armada baru" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+        <div class="relative z-10 p-6">
+          <span class="bg-tertiary-container text-on-tertiary-container text-xs font-semibold px-3 py-1 rounded-full mb-2 inline-block">Rilis Baru</span>
+          <h3 class="text-white font-bold text-xl">Armada 2024 Telah Hadir</h3>
+        </div>
+      </div>
+
+      <!-- Promo 2 -->
+      <div class="lg:col-span-8 bg-secondary-container p-8 rounded-[2rem] flex flex-col md:flex-row items-center justify-between gap-4 group overflow-hidden">
+        <div class="max-w-md">
+          <h3 class="text-on-secondary-container font-bold text-xl md:text-2xl mb-2">Promo Weekend Warrior</h3>
+          <p class="text-on-secondary-container/80 text-sm mb-4">Ride tak terbatas setiap Sabtu & Minggu hanya 50k IDR. Sempurna untuk menjelajahi mal dan taman.</p>
+          <button onclick="handleClaimPromo()" class="bg-on-secondary-container text-secondary-container font-semibold text-sm px-6 py-2.5 rounded-full hover:shadow-xl transition-all active:scale-95">
+            Klaim Promo
+          </button>
+        </div>
+        <div class="hidden md:block transform group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-white/30" style="font-size:140px">local_activity</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Active Hubs -->
+  <section class="py-16 bg-background">
+    <div class="px-5 md:px-16 mb-8 flex items-end justify-between">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-bold text-on-background mb-1">Hub Aktif</h2>
+        <p class="text-on-surface-variant text-sm">Status real-time hub e-bike dan stasiun daur ulang di Summarecon Bekasi.</p>
+      </div>
+      <button onclick="navigateTo('explore')" class="text-primary font-semibold text-sm flex items-center gap-1 hover:underline">
+        Lihat Semua <span class="material-symbols-outlined text-sm">arrow_forward</span>
+      </button>
+    </div>
+    <div class="px-5 md:px-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="navigateTo('explore')">
+        <div class="flex justify-between items-start mb-5">
+          <div class="w-10 h-10 rounded-lg bg-primary-container text-white flex items-center justify-center"><span class="material-symbols-outlined">location_on</span></div>
+          <span class="text-xs font-semibold text-primary bg-primary-fixed px-3 py-1 rounded-full">8 Sepeda</span>
+        </div>
+        <h4 class="font-semibold text-sm mb-1">The Landmark Hub</h4>
+        <p class="text-xs text-on-surface-variant">Dekat pintu masuk timur utama.</p>
+      </div>
+      <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="navigateTo('explore')">
+        <div class="flex justify-between items-start mb-5">
+          <div class="w-10 h-10 rounded-lg bg-primary-container text-white flex items-center justify-center"><span class="material-symbols-outlined">location_on</span></div>
+          <span class="text-xs font-semibold text-error bg-error-container px-3 py-1 rounded-full">2 Sepeda</span>
+        </div>
+        <h4 class="font-semibold text-sm mb-1">Malls Park Side</h4>
+        <p class="text-xs text-on-surface-variant">Sebelah Starbucks Utara.</p>
+      </div>
+      <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="navigateTo('explore')">
+        <div class="flex justify-between items-start mb-5">
+          <div class="w-10 h-10 rounded-lg bg-secondary-container text-white flex items-center justify-center"><span class="material-symbols-outlined">recycling</span></div>
+          <span class="text-xs font-semibold text-on-surface-variant bg-surface-variant px-3 py-1 rounded-full">Bin 80%</span>
+        </div>
+        <h4 class="font-semibold text-sm mb-1">Stasiun Daur Ulang A</h4>
+        <p class="text-xs text-on-surface-variant">Basement 1 - Zona Orange.</p>
+      </div>
+      <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="navigateTo('explore')">
+        <div class="flex justify-between items-start mb-5">
+          <div class="w-10 h-10 rounded-lg bg-primary-container text-white flex items-center justify-center"><span class="material-symbols-outlined">location_on</span></div>
+          <span class="text-xs font-semibold text-primary bg-primary-fixed px-3 py-1 rounded-full">12 Sepeda</span>
+        </div>
+        <h4 class="font-semibold text-sm mb-1">Emerald Residence</h4>
+        <p class="text-xs text-on-surface-variant">Gate B Community Center.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-inverse-surface text-inverse-on-surface py-16 px-5 md:px-16 mt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 pb-10 border-b border-outline/30">
+      <div class="lg:col-span-5">
+        <span class="font-bold text-xl text-inverse-primary mb-4 block">Summarecon EcoRide</span>
+        <p class="text-sm text-on-surface-variant max-w-sm leading-relaxed">Memberdayakan warga Bekasi dengan mobilitas perkotaan berkelanjutan dan program daur ulang dengan insentif.</p>
+      </div>
+      <div class="lg:col-span-2 space-y-3">
+        <h5 class="font-semibold text-sm">Platform</h5>
+        <ul class="text-on-surface-variant space-y-2 text-xs">
+          <li><a href="#" class="hover:text-inverse-primary transition-colors">Cara Kerja</a></li>
+          <li><a href="#" class="hover:text-inverse-primary transition-colors">Harga</a></li>
+          <li><a href="#" class="hover:text-inverse-primary transition-colors">Rewards</a></li>
+          <li><button onclick="navigateTo('explore')" class="hover:text-inverse-primary transition-colors">Lokasi</button></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-2 space-y-3">
+        <h5 class="font-semibold text-sm">Perusahaan</h5>
+        <ul class="text-on-surface-variant space-y-2 text-xs">
+          <li><a href="#" class="hover:text-inverse-primary transition-colors">Tentang Kami</a></li>
+          <li><a href="#" class="hover:text-inverse-primary transition-colors">Keselamatan</a></li>
+          <li><a href="#" class="hover:text-inverse-primary transition-colors">Keberlanjutan</a></li>
+          <li><a href="#" class="hover:text-inverse-primary transition-colors">Privasi</a></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-3 space-y-3">
+        <h5 class="font-semibold text-sm">Download App</h5>
+        <div class="flex flex-col gap-3">
+          <button onclick="showToast('App Store segera tersedia!')" class="flex items-center gap-3 bg-outline/20 p-3 rounded-xl hover:bg-outline/40 cursor-pointer transition-colors">
+            <span class="material-symbols-outlined text-3xl">phone_iphone</span>
+            <div><p class="text-[10px] uppercase font-bold tracking-wider">Download on</p><p class="font-semibold text-sm">App Store</p></div>
+          </button>
+          <button onclick="showToast('Google Play segera tersedia!')" class="flex items-center gap-3 bg-outline/20 p-3 rounded-xl hover:bg-outline/40 cursor-pointer transition-colors">
+            <span class="material-symbols-outlined text-3xl">android</span>
+            <div><p class="text-[10px] uppercase font-bold tracking-wider">Get it on</p><p class="font-semibold text-sm">Google Play</p></div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-on-surface-variant text-xs">© 2024 Summarecon EcoRide. Hak cipta dilindungi.</p>
+      <div class="flex gap-4">
+        <span class="material-symbols-outlined cursor-pointer hover:text-inverse-primary">language</span>
+        <span class="material-symbols-outlined cursor-pointer hover:text-inverse-primary">share</span>
+      </div>
+    </div>
+  </footer>
+  <div class="mobile-spacer md:hidden"></div>
+</div>
+
+<!-- ===== PAGE: EXPLORE ===== -->
+<div class="page" id="page-explore">
+  <div class="pt-14 min-h-screen flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <div class="w-full md:w-[400px] bg-surface-container-lowest h-auto md:h-screen md:overflow-y-auto z-40 shadow-xl border-r border-outline-variant p-5">
+      <div class="mb-4 mt-2">
+        <h1 class="text-2xl font-bold text-on-surface mb-1">Temukan Sepeda</h1>
+        <p class="text-on-surface-variant text-sm">Jelajahi Summarecon Bekasi dengan dua roda.</p>
+      </div>
+
+      <!-- Search -->
+      <div class="relative mb-6">
+        <input type="text" id="exploreSearch" placeholder="Cari hub atau lokasi..." class="w-full pl-12 pr-4 py-3 bg-surface border border-outline-variant rounded-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none text-sm" oninput="filterHubs(this.value)"/>
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="flex gap-2 mb-5">
+        <button onclick="setExploreFilter('all')" id="filter-all" class="explore-filter px-3 py-1.5 rounded-full text-xs font-semibold bg-primary text-on-primary">Semua</button>
+        <button onclick="setExploreFilter('bike')" id="filter-bike" class="explore-filter px-3 py-1.5 rounded-full text-xs font-semibold bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors">E-Bike Hub</button>
+        <button onclick="setExploreFilter('recycle')" id="filter-recycle" class="explore-filter px-3 py-1.5 rounded-full text-xs font-semibold bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors">Daur Ulang</button>
+      </div>
+
+      <!-- Hub List -->
+      <div class="space-y-4" id="hubList">
+        <!-- Hub 1 -->
+        <div class="hub-card bg-surface border border-outline-variant rounded-xl p-4 hover:border-primary transition-all cursor-pointer shadow-sm" data-type="bike" onclick="selectHub(this, 'Summarecon Mall Hub')">
+          <div class="flex justify-between items-start mb-3">
+            <div>
+              <span class="font-semibold text-xs text-primary bg-primary-container/10 px-2 py-1 rounded-md mb-2 inline-block">Rekomendasi</span>
+              <h3 class="font-bold text-base text-on-surface">Summarecon Mall Hub</h3>
+            </div>
+            <div class="flex items-center gap-1 text-primary">
+              <span class="material-symbols-outlined text-sm mat-fill">directions_bike</span>
+              <span class="font-semibold text-xs">12 Tersisa</span>
+            </div>
+          </div>
+          <div class="aspect-video w-full rounded-lg overflow-hidden mb-3">
+            <img src="https://lh3.googleusercontent.com/aida/ADBb0ugvg6QQZlRX4I6Bc30eTiPGRPSgj8NamTXIn58gBacXkcVS1LA4x9AMp53Ht4qhTPC4GAJCf66lGO-4kRhLcSe0utxbluCXMKOTi9Hl6ACTN5-UrmqsIFMBqMPnOB-GTKtezYbY1IZKKJzzyJWuDrmzDeORcV1Sav5AQtPpApY0I7LzX73kyN3CduAeL0ssbcLw7vrGo6U70wzBjgn3RIUYcYHVFu5FOy9HYohErnnWtG5c6W88F6iIYji2" alt="Hub" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"/>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-secondary mat-fill" style="font-size:16px">battery_charging_80</span>
+                <span class="text-xs text-on-surface-variant font-semibold">88%</span>
+              </div>
+              <span class="text-xs text-tertiary font-semibold">Rp 500/menit</span>
+            </div>
+            <button onclick="event.stopPropagation(); handleBookNow('Summarecon Mall Hub')" class="bg-primary text-on-primary px-4 py-2 rounded-full text-xs font-bold hover:shadow-lg transition-all active:scale-95">Pesan</button>
+          </div>
+        </div>
+
+        <!-- Hub 2 -->
+        <div class="hub-card bg-surface border border-outline-variant rounded-xl p-4 hover:border-primary transition-all cursor-pointer shadow-sm" data-type="bike" onclick="selectHub(this, 'The SpringLake Hub')">
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-bold text-base text-on-surface">The SpringLake Hub</h3>
+            <div class="flex items-center gap-1 text-on-surface-variant">
+              <span class="material-symbols-outlined text-sm">directions_bike</span>
+              <span class="font-semibold text-xs">4 Tersisa</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-error mat-fill" style="font-size:16px">battery_2_bar</span>
+                <span class="text-xs text-on-surface-variant font-semibold">32%</span>
+              </div>
+              <span class="text-xs text-tertiary font-semibold">Rp 500/menit</span>
+            </div>
+            <button onclick="event.stopPropagation(); handleBookNow('The SpringLake Hub')" class="bg-surface-container text-on-surface px-4 py-2 rounded-full text-xs font-bold hover:bg-surface-container-high transition-all active:scale-95">Detail</button>
+          </div>
+        </div>
+
+        <!-- Hub 3 -->
+        <div class="hub-card bg-surface border border-outline-variant rounded-xl p-4 hover:border-primary transition-all cursor-pointer shadow-sm" data-type="bike" onclick="selectHub(this, 'Sinpasa Hub')">
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-bold text-base text-on-surface">Sinpasa Hub</h3>
+            <div class="flex items-center gap-1 text-primary">
+              <span class="material-symbols-outlined text-sm mat-fill">directions_bike</span>
+              <span class="font-semibold text-xs">8 Tersisa</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-primary mat-fill" style="font-size:16px">battery_full</span>
+                <span class="text-xs text-on-surface-variant font-semibold">100%</span>
+              </div>
+              <span class="text-xs text-tertiary font-semibold">Rp 500/menit</span>
+            </div>
+            <button onclick="event.stopPropagation(); handleBookNow('Sinpasa Hub')" class="bg-surface-container text-on-surface px-4 py-2 rounded-full text-xs font-bold hover:bg-surface-container-high transition-all active:scale-95">Detail</button>
+          </div>
+        </div>
+
+        <!-- Hub 4 (Recycle) -->
+        <div class="hub-card bg-surface border border-outline-variant rounded-xl p-4 hover:border-secondary transition-all cursor-pointer shadow-sm" data-type="recycle" onclick="selectHub(this, 'Stasiun Daur Ulang A')">
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-bold text-base text-on-surface">Stasiun Daur Ulang A</h3>
+            <div class="flex items-center gap-1 text-secondary">
+              <span class="material-symbols-outlined text-sm">recycling</span>
+              <span class="font-semibold text-xs">Tersedia</span>
+            </div>
+          </div>
+          <p class="text-xs text-on-surface-variant mb-3">Basement 1 - Zona Orange. Terima PET, HDPE, PP.</p>
+          <div class="w-full bg-surface-variant rounded-full h-2 mb-1">
+            <div class="bg-tertiary h-2 rounded-full" style="width:80%"></div>
+          </div>
+          <p class="text-xs text-on-surface-variant">Kapasitas: 80% penuh</p>
+        </div>
+
+        <!-- Hub 5 -->
+        <div class="hub-card bg-surface border border-outline-variant rounded-xl p-4 hover:border-primary transition-all cursor-pointer shadow-sm" data-type="bike" onclick="selectHub(this, 'Emerald Residence Hub')">
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-bold text-base text-on-surface">Emerald Residence Hub</h3>
+            <div class="flex items-center gap-1 text-primary">
+              <span class="material-symbols-outlined text-sm mat-fill">directions_bike</span>
+              <span class="font-semibold text-xs">12 Tersisa</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-primary mat-fill" style="font-size:16px">battery_charging_full</span>
+                <span class="text-xs text-on-surface-variant font-semibold">95%</span>
+              </div>
+              <span class="text-xs text-tertiary font-semibold">Rp 500/menit</span>
+            </div>
+            <button onclick="event.stopPropagation(); handleBookNow('Emerald Residence Hub')" class="bg-surface-container text-on-surface px-4 py-2 rounded-full text-xs font-bold hover:bg-surface-container-high transition-all active:scale-95">Detail</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eco Bonus -->
+      <div class="mt-8 p-4 bg-secondary-container/10 rounded-2xl border border-secondary-container/20">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-secondary">recycling</span>
+          <span class="font-semibold text-sm text-secondary">Eco-Bonus Aktif</span>
+        </div>
+        <p class="text-sm text-on-surface-variant mb-3">Kumpulkan 200 kredit untuk setiap sepeda yang dikembalikan ke Hub Daur Ulang.</p>
+        <div class="w-full bg-surface-container rounded-full h-2 mb-1">
+          <div class="bg-tertiary h-2 rounded-full" style="width:65%"></div>
+        </div>
+        <div class="flex justify-between text-xs text-on-surface-variant">
+          <span>Target: 1000 pts</span><span class="text-tertiary font-bold">650 pts</span>
+        </div>
+      </div>
+
+      <div class="mobile-spacer md:hidden"></div>
+    </div>
+
+    <!-- Map Area -->
+    <div class="flex-1 relative h-[50vh] md:h-screen map-bg">
+      <!-- Roads -->
+      <div class="map-road-h" style="top:40%; left:0; right:0"></div>
+      <div class="map-road-h" style="top:65%; left:0; right:0"></div>
+      <div class="map-road-v" style="left:30%; top:0; bottom:0"></div>
+      <div class="map-road-v" style="left:60%; top:0; bottom:0"></div>
+      <div class="map-road-v" style="left:80%; top:0; bottom:0"></div>
+
+      <!-- Map Labels -->
+      <div class="absolute text-xs font-semibold text-on-surface/40 select-none" style="top:20%; left:10%">Summarecon Mall</div>
+      <div class="absolute text-xs font-semibold text-on-surface/40 select-none" style="top:50%; left:65%">SpringLake</div>
+      <div class="absolute text-xs font-semibold text-on-surface/40 select-none" style="top:72%; left:20%">Sinpasa</div>
+      <div class="absolute text-xs font-semibold text-on-surface/40 select-none" style="top:25%; left:82%">Emerald</div>
+
+      <!-- Hub Markers -->
+      <div class="hub-marker" style="top:32%; left:40%" onclick="handleBookNow('Summarecon Mall Hub')">
+        <div class="flex flex-col items-center">
+          <div class="bg-primary text-on-primary text-xs font-bold px-2 py-1 rounded-full shadow-lg mb-1 hover:-translate-y-1 transition-transform">12 Sepeda</div>
+          <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-on-primary shadow-xl border-4 border-white hub-pulse active:scale-90 transition-all">
+            <span class="material-symbols-outlined mat-fill">directions_bike</span>
+          </div>
+        </div>
+      </div>
+      <div class="hub-marker" style="top:58%; left:62%" onclick="handleBookNow('The SpringLake Hub')">
+        <div class="flex flex-col items-center">
+          <div class="bg-secondary text-on-secondary text-xs font-bold px-2 py-1 rounded-full shadow-lg mb-1 hover:-translate-y-1 transition-transform">4 Sepeda</div>
+          <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-on-secondary shadow-xl border-4 border-white active:scale-90 transition-all">
+            <span class="material-symbols-outlined">directions_bike</span>
+          </div>
+        </div>
+      </div>
+      <div class="hub-marker" style="top:18%; left:22%" onclick="showToast('Stasiun Daur Ulang A - Basement 1')">
+        <div class="flex flex-col items-center">
+          <div class="bg-tertiary text-on-tertiary text-xs font-bold px-2 py-1 rounded-full shadow-lg mb-1 hover:-translate-y-1 transition-transform">Recycle Hub</div>
+          <div class="w-10 h-10 bg-tertiary rounded-full flex items-center justify-center text-on-tertiary shadow-xl border-4 border-white active:scale-90 transition-all">
+            <span class="material-symbols-outlined">recycling</span>
+          </div>
+        </div>
+      </div>
+      <div class="hub-marker" style="top:22%; left:76%" onclick="handleBookNow('Emerald Residence Hub')">
+        <div class="flex flex-col items-center">
+          <div class="bg-primary text-on-primary text-xs font-bold px-2 py-1 rounded-full shadow-lg mb-1 hover:-translate-y-1 transition-transform">12 Sepeda</div>
+          <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-on-primary shadow-xl border-4 border-white active:scale-90 transition-all">
+            <span class="material-symbols-outlined mat-fill">directions_bike</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map Controls -->
+      <div class="absolute top-4 right-4 z-10 flex flex-col gap-2">
+        <div class="bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-white/20 flex flex-col gap-2">
+          <button onclick="showToast('Zoom in')" class="w-10 h-10 rounded-xl bg-surface-container-lowest border border-outline-variant flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm active:scale-90">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+          <button onclick="showToast('Zoom out')" class="w-10 h-10 rounded-xl bg-surface-container-lowest border border-outline-variant flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm active:scale-90">
+            <span class="material-symbols-outlined">remove</span>
+          </button>
+          <div class="w-full h-px bg-outline-variant my-1"></div>
+          <button onclick="showToast('Mencari lokasi kamu...')" class="w-10 h-10 rounded-xl bg-surface-container-lowest border border-outline-variant flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm active:scale-90">
+            <span class="material-symbols-outlined">my_location</span>
+          </button>
+        </div>
+        <!-- Legend -->
+        <div class="bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-white/20">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+            <span class="text-xs font-semibold text-on-surface">Traffic: Rendah</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2"><div class="w-4 h-4 bg-primary rounded"></div><span class="text-xs text-on-surface-variant">E-Bike Hub</span></div>
+            <div class="flex items-center gap-2"><div class="w-4 h-4 bg-tertiary rounded"></div><span class="text-xs text-on-surface-variant">Recycle Point</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: RECYCLE ===== -->
+<div class="page" id="page-recycle">
+  <div class="pt-20 pb-20 md:pb-0 px-5 md:px-16 max-w-5xl mx-auto">
+    <div class="mb-8 fade-in">
+      <h1 class="text-2xl md:text-4xl font-bold text-on-surface mb-2">Pusat Daur Ulang</h1>
+      <p class="text-on-surface-variant text-sm md:text-base">Ubah sampah plastikmu menjadi kredit perjalanan. Setiap gram berarti!</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-8">
+      <!-- Recycle CTA -->
+      <div class="md:col-span-7 bg-primary-container text-on-primary-container p-8 rounded-[2rem] relative overflow-hidden">
+        <div class="relative z-10">
+          <span class="text-xs font-semibold bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full mb-4 inline-block">Scan & Kumpulkan</span>
+          <h2 class="text-2xl md:text-3xl font-bold mb-3">Setor Plastikmu Sekarang</h2>
+          <p class="text-sm opacity-90 mb-6 max-w-md">Bawa botol PET, HDPE, atau PP ke stasiun IoT kami. Berat langsung terukur & poin langsung masuk!</p>
+          <div class="flex flex-wrap gap-3">
+            <button onclick="handleRecycleScan()" class="bg-primary-fixed text-on-primary-fixed font-bold text-sm px-6 py-3 rounded-xl flex items-center gap-2 hover:opacity-90 transition-opacity active:scale-95">
+              <span class="material-symbols-outlined">qr_code_scanner</span> Scan QR Bin
+            </button>
+            <button onclick="navigateTo('explore')" class="border-2 border-white/40 text-on-primary-container font-semibold text-sm px-6 py-3 rounded-xl hover:bg-white/10 transition-all active:scale-95">
+              Temukan Stasiun
+            </button>
+          </div>
+        </div>
+        <div class="absolute -bottom-6 -right-6 opacity-20">
+          <span class="material-symbols-outlined" style="font-size:140px">recycling</span>
+        </div>
+      </div>
+
+      <!-- Points Card -->
+      <div class="md:col-span-5 flex flex-col gap-4">
+        <div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant shadow-sm flex-1">
+          <p class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1">Total Poinmu</p>
+          <p class="text-4xl font-bold text-primary mb-1">12,450</p>
+          <p class="text-xs text-on-surface-variant">≈ 249 menit ride gratis</p>
+          <div class="mt-4 w-full bg-surface-variant rounded-full h-2">
+            <div class="bg-primary h-2 rounded-full" style="width:62%"></div>
+          </div>
+          <p class="text-xs text-on-surface-variant mt-1">62% menuju Level Platinum</p>
+        </div>
+        <div class="bg-tertiary-fixed text-on-tertiary-fixed p-6 rounded-2xl flex items-center gap-4">
+          <span class="material-symbols-outlined mat-fill text-tertiary" style="font-size:40px">emoji_events</span>
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider opacity-60">Peringkat Komunitas</p>
+            <p class="text-2xl font-bold">#7 <span class="text-sm font-normal opacity-60">dari 1,240</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Material Guide -->
+    <div class="mb-8">
+      <h2 class="text-lg font-bold text-on-surface mb-4">Material yang Diterima</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant text-center hover:border-primary transition-colors cursor-pointer" onclick="showToast('PET: 50 poin/100gram')">
+          <div class="w-12 h-12 rounded-full bg-secondary-fixed mx-auto mb-3 flex items-center justify-center">
+            <span class="material-symbols-outlined text-secondary">water_bottle</span>
+          </div>
+          <p class="font-bold text-sm">PET</p>
+          <p class="text-xs text-on-surface-variant">Botol Minum</p>
+          <p class="text-xs font-semibold text-primary mt-1">50 pts/100g</p>
+        </div>
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant text-center hover:border-primary transition-colors cursor-pointer" onclick="showToast('HDPE: 40 poin/100gram')">
+          <div class="w-12 h-12 rounded-full bg-primary-fixed mx-auto mb-3 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary">liquor</span>
+          </div>
+          <p class="font-bold text-sm">HDPE</p>
+          <p class="text-xs text-on-surface-variant">Galon & Jerigen</p>
+          <p class="text-xs font-semibold text-primary mt-1">40 pts/100g</p>
+        </div>
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant text-center hover:border-primary transition-colors cursor-pointer" onclick="showToast('PP: 30 poin/100gram')">
+          <div class="w-12 h-12 rounded-full bg-tertiary-fixed mx-auto mb-3 flex items-center justify-center">
+            <span class="material-symbols-outlined text-tertiary">takeout_dining</span>
+          </div>
+          <p class="font-bold text-sm">PP</p>
+          <p class="text-xs text-on-surface-variant">Wadah Makanan</p>
+          <p class="text-xs font-semibold text-primary mt-1">30 pts/100g</p>
+        </div>
+        <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant text-center hover:border-primary transition-colors cursor-pointer" onclick="showToast('Aluminium: 80 poin/100gram')">
+          <div class="w-12 h-12 rounded-full bg-surface-container-high mx-auto mb-3 flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-surface-variant">coffee</span>
+          </div>
+          <p class="font-bold text-sm">Aluminium</p>
+          <p class="text-xs text-on-surface-variant">Kaleng Minuman</p>
+          <p class="text-xs font-semibold text-primary mt-1">80 pts/100g</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exchange Table -->
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant p-6 shadow-sm mb-8">
+      <h2 class="text-lg font-bold text-on-surface mb-4">Tabel Penukaran Poin</h2>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between p-3 bg-surface-container rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer" onclick="handleRedeemPoints(50, '15 Menit Ride')">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center"><span class="material-symbols-outlined text-primary text-sm">directions_bike</span></div>
+            <span class="font-semibold text-sm">50 Poin → 15 Menit Ride</span>
+          </div>
+          <button class="text-xs font-bold text-primary hover:underline">Tukar</button>
+        </div>
+        <div class="flex items-center justify-between p-3 bg-surface-container rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer" onclick="handleRedeemPoints(200, 'Day Pass')">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center"><span class="material-symbols-outlined text-primary text-sm">calendar_today</span></div>
+            <span class="font-semibold text-sm">200 Poin → Day Pass</span>
+          </div>
+          <button class="text-xs font-bold text-primary hover:underline">Tukar</button>
+        </div>
+        <div class="flex items-center justify-between p-3 bg-surface-container rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer" onclick="handleRedeemPoints(500, 'Weekend Pass')">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center"><span class="material-symbols-outlined text-secondary text-sm">weekend</span></div>
+            <span class="font-semibold text-sm">500 Poin → Weekend Pass</span>
+          </div>
+          <button class="text-xs font-bold text-primary hover:underline">Tukar</button>
+        </div>
+        <div class="flex items-center justify-between p-3 bg-tertiary-fixed rounded-xl hover:opacity-90 transition-opacity cursor-pointer" onclick="handleRedeemPoints(1000, 'Hadiah Eksklusif')">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center"><span class="material-symbols-outlined text-on-tertiary text-sm mat-fill">redeem</span></div>
+            <span class="font-semibold text-sm text-on-tertiary-fixed">1000 Poin → Hadiah Eksklusif</span>
+          </div>
+          <span class="material-symbols-outlined text-on-tertiary-fixed-variant text-sm">chevron_right</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-spacer md:hidden"></div>
+  </div>
+</div>
+
+<!-- ===== PAGE: PROFILE ===== -->
+<div class="page" id="page-profile">
+  <div class="pt-20 pb-20 md:pb-0 px-5 md:px-16 max-w-6xl mx-auto">
+    <!-- Header -->
+    <section class="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 gap-4 fade-in">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-on-surface">Halo, Aryo Wijaya 👋</h1>
+        <p class="text-on-surface-variant text-sm md:text-base">Selamat kembali ke Eco-Hub Bekasi milikmu.</p>
+      </div>
+      <div class="bg-primary-container text-on-primary-container px-6 py-3 rounded-xl shadow-lg flex items-center gap-4 border border-outline-variant/20">
+        <span class="material-symbols-outlined mat-fill text-3xl">recycling</span>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider opacity-75">Total Poin Daur Ulang</p>
+          <p class="text-4xl font-bold leading-none">12,450</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <!-- Current Rental -->
+      <div class="lg:col-span-8 bg-surface-container-lowest rounded-xl p-5 md:p-6 shadow-sm border border-outline-variant/30 overflow-hidden relative group" id="rentalCard">
+        <div class="flex justify-between items-start mb-5">
+          <div>
+            <h2 class="font-bold text-lg text-on-surface">Rental Aktif</h2>
+            <p class="text-sm text-on-surface-variant">Sepeda #EK-2041 • Aktif <span class="ride-timer font-bold text-primary" id="rideTimer">24:13</span></p>
+          </div>
+          <span class="bg-secondary-fixed text-on-secondary-fixed px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+            <span class="material-symbols-outlined mat-fill text-sm">battery_charging_full</span> 82%
+          </span>
+        </div>
+        <div class="flex flex-col md:flex-row gap-6 items-center">
+          <div class="w-full md:w-1/2 aspect-video rounded-xl overflow-hidden shadow-md">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuByRbf26ZSfJ9NoM5NVSPQhDqWLcLlkqug_HSaVtWEeYTi1vsQ2swNzPUZmh2WgovUWI3wJrtp1mZIOmEkk3IxZFlPHZwDXM3HYL6kpOrZcPpqJQA5_EoTSZRjvUUk9RQjwmMRHWEnB7ChYpdql4QXiS_jJPW2xUUkdxdxbeDwB5oEREievUq0btir348PvTGxKi59jt0B2kMmfSAkJpFpzcbBF94Wcp7TZ1UJBNWbXzOUDo1VpsIdNDfZKzxQl6I9JFkixN2IjhWe6" alt="E-Bike" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+          </div>
+          <div class="w-full md:w-1/2 space-y-4">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Jarak Tempuh</span>
+              <p class="text-2xl font-bold text-primary" id="rideDistance">3.2 km</p>
+            </div>
+            <div class="w-full bg-surface-variant rounded-full h-2">
+              <div class="bg-primary h-2 rounded-full" style="width:67%;box-shadow:0 0 8px rgba(13,99,27,0.4)"></div>
+            </div>
+            <p class="text-xs text-on-surface-variant">Estimasi biaya: <span class="font-bold text-on-surface" id="rideCost">Rp 7,200</span></p>
+            <div class="flex gap-2">
+              <button onclick="handleEndRide()" class="flex-1 bg-primary text-on-primary font-bold py-2.5 rounded-full active:scale-95 transition-all shadow-md text-sm">
+                Selesai Ride
+              </button>
+              <button onclick="showToast('Ride dijeda')" class="px-5 border border-outline text-on-surface font-semibold py-2.5 rounded-full active:scale-95 transition-all text-sm">
+                Jeda
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="lg:col-span-4 flex flex-col gap-4">
+        <div class="flex-1 bg-surface-container-low rounded-xl p-5 border border-outline-variant/30 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">CO2 Dihemat</span>
+            <p class="text-2xl font-bold text-primary">14.2 kg</p>
+          </div>
+          <div class="w-14 h-14 bg-primary-container/10 rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-3xl">eco</span>
+          </div>
+        </div>
+        <div class="flex-1 bg-surface-container-low rounded-xl p-5 border border-outline-variant/30 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Total Rides</span>
+            <p class="text-2xl font-bold text-secondary">48</p>
+          </div>
+          <div class="w-14 h-14 bg-secondary-container/10 rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-secondary text-3xl">directions_bike</span>
+          </div>
+        </div>
+        <div class="flex-1 bg-surface-container-low rounded-xl p-5 border border-outline-variant/30 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Plastik Didaur Ulang</span>
+            <p class="text-2xl font-bold text-tertiary">24.8 kg</p>
+          </div>
+          <div class="w-14 h-14 bg-tertiary-fixed/30 rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-tertiary text-3xl">recycling</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="lg:col-span-7 bg-surface-container-lowest rounded-xl p-5 shadow-sm border border-outline-variant/30">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-bold text-lg text-on-surface">Aktivitas Terkini</h2>
+          <button onclick="showToast('Fitur riwayat lengkap segera hadir!')" class="text-primary font-semibold text-xs hover:underline">Lihat Semua</button>
+        </div>
+        <div class="space-y-1">
+          <div class="flex items-center justify-between p-3 hover:bg-surface-container rounded-xl transition-colors cursor-pointer">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-primary-container/20 flex items-center justify-center text-primary flex-shrink-0"><span class="material-symbols-outlined text-sm">recycling</span></div>
+              <div><p class="font-semibold text-sm text-on-surface">Reward Daur Ulang</p><p class="text-xs text-on-surface-variant">24 Okt 2023 • 10.2 kg PET</p></div>
+            </div>
+            <span class="font-bold text-sm text-primary">+510 pts</span>
+          </div>
+          <div class="flex items-center justify-between p-3 hover:bg-surface-container rounded-xl transition-colors cursor-pointer">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-secondary-container/20 flex items-center justify-center text-secondary flex-shrink-0"><span class="material-symbols-outlined text-sm">directions_bike</span></div>
+              <div><p class="font-semibold text-sm text-on-surface">Rental Sepeda #EK-2041</p><p class="text-xs text-on-surface-variant">22 Okt 2023 • 42 menit</p></div>
+            </div>
+            <span class="font-bold text-sm text-on-surface-variant">-Rp 12,000</span>
+          </div>
+          <div class="flex items-center justify-between p-3 hover:bg-surface-container rounded-xl transition-colors cursor-pointer">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-tertiary-container/20 flex items-center justify-center text-tertiary flex-shrink-0"><span class="material-symbols-outlined text-sm">wallet</span></div>
+              <div><p class="font-semibold text-sm text-on-surface">Top-up Dompet</p><p class="text-xs text-on-surface-variant">20 Okt 2023 • Virtual Account</p></div>
+            </div>
+            <span class="font-bold text-sm text-on-surface">+Rp 50,000</span>
+          </div>
+          <div class="flex items-center justify-between p-3 hover:bg-surface-container rounded-xl transition-colors cursor-pointer">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-primary-container/20 flex items-center justify-center text-primary flex-shrink-0"><span class="material-symbols-outlined text-sm">recycling</span></div>
+              <div><p class="font-semibold text-sm text-on-surface">Reward Daur Ulang</p><p class="text-xs text-on-surface-variant">18 Okt 2023 • 6.8 kg HDPE</p></div>
+            </div>
+            <span class="font-bold text-sm text-primary">+272 pts</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Settings -->
+      <div class="lg:col-span-5 bg-surface-container-lowest rounded-xl p-5 shadow-sm border border-outline-variant/30">
+        <h2 class="font-bold text-lg text-on-surface mb-4">Pengaturan Akun</h2>
+        <div class="space-y-3">
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Nama Lengkap</label>
+            <input type="text" value="Aryo Wijaya" class="bg-surface border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none"/>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Alamat Email</label>
+            <input type="email" value="aryo.wijaya@example.com" class="bg-surface border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none"/>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Nomor HP</label>
+            <input type="tel" value="+62 812 3456 7890" class="bg-surface border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none"/>
+          </div>
+          <!-- Toggle: Push Notif -->
+          <div class="flex items-center justify-between py-2 border-b border-outline-variant/30">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-on-surface-variant">notifications_active</span>
+              <span class="font-semibold text-sm text-on-surface">Push Notifications</span>
+            </div>
+            <div class="toggle-on" onclick="toggleSwitch(this)" style="user-select:none">
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+          <!-- Toggle: 2FA -->
+          <div class="flex items-center justify-between py-2 border-b border-outline-variant/30">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-on-surface-variant">security</span>
+              <span class="font-semibold text-sm text-on-surface">Autentikasi Dua Faktor</span>
+            </div>
+            <div class="toggle-off" onclick="toggleSwitch(this)" style="user-select:none">
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+          <button onclick="showToast('Profil berhasil diperbarui!')" class="w-full mt-2 bg-primary text-on-primary font-bold py-2.5 rounded-full hover:bg-primary/90 transition-all active:scale-95 text-sm">
+            Simpan Perubahan
+          </button>
+          <button onclick="handleLogout()" class="w-full bg-surface-container-high text-on-surface font-semibold py-2.5 rounded-full hover:bg-error-container hover:text-error transition-all text-sm">
+            Keluar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-spacer md:hidden"></div>
+  </div>
+</div>
+
+<!-- ===== PAGE: LOGIN ===== -->
+<div class="page" id="page-login">
+  <div class="grid lg:grid-cols-2 w-full min-h-screen pt-14">
+    <!-- Left Branding -->
+    <section class="hidden lg:flex relative overflow-hidden bg-primary-container items-center justify-center p-16">
+      <div class="absolute inset-0 z-0">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9gKil9pqEdjmtghXgq4KwUd4wgGLgQtzdbaW6BffbfNS20GkSKST3oZCrJ66aVPAmXaP0qrXbB3d9SxZQ3ZdVk8DKowK72PBQ7bgtpTUfGqz8jAgl5okhV8lDZR1GXCvz75oVVoPFg_FIPzzRmoOJysO8KKhTe9ejDLdkzMEscKbhE_yXNvnAbhS5NjD3oRrLkYETAUAnkU8UD4z1nCJ46z8kxevOvSvjOhIErVYuiIi4hpAq2iN75yIFr5Y3N28jmzRXGjKE56hB" alt="" class="w-full h-full object-cover opacity-60"/>
+        <div class="absolute inset-0 bg-gradient-to-tr from-primary/90 to-transparent"></div>
+      </div>
+      <div class="relative z-10 max-w-lg text-on-primary-container">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">Ride Towards a Greener Bekasi.</h1>
+        <p class="text-base opacity-80 mb-8">Bergabunglah dengan komunitas Summarecon dalam mengurangi jejak karbon satu perjalanan pada satu waktu.</p>
+        <div class="flex gap-4">
+          <div class="bg-surface/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+            <p class="text-2xl font-bold text-white">50k+</p><p class="text-xs opacity-70">Eco Rides</p>
+          </div>
+          <div class="bg-surface/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+            <p class="text-2xl font-bold text-white">12t</p><p class="text-xs opacity-70">CO2 Dihemat</p>
+          </div>
+          <div class="bg-surface/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+            <p class="text-2xl font-bold text-white">2.4t</p><p class="text-xs opacity-70">Plastik Didaur</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Form -->
+    <section class="flex flex-col items-center justify-center p-5 md:p-16 bg-surface">
+      <div class="w-full max-w-md">
+        <div class="lg:hidden flex flex-col items-center mb-10">
+          <div class="w-14 h-14 rounded-full bg-primary flex items-center justify-center mb-3">
+            <span class="material-symbols-outlined text-white text-2xl mat-fill">directions_bike</span>
+          </div>
+          <h2 class="font-bold text-xl text-primary">Summarecon EcoRide</h2>
+        </div>
+        <div class="mb-8">
+          <h2 class="font-bold text-3xl text-on-surface mb-1">Selamat Datang</h2>
+          <p class="text-on-surface-variant text-sm">Masuk ke akun eco-mu untuk melanjutkan perjalanan.</p>
+        </div>
+
+        <!-- Login Form -->
+        <form class="space-y-4" onsubmit="handleLogin(event)">
+          <div class="space-y-1">
+            <label class="font-semibold text-xs text-on-surface-variant" for="loginEmail">Alamat Email</label>
+            <div class="relative group">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">mail</span>
+              <input class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none text-sm" id="loginEmail" placeholder="nama@perusahaan.com" type="email" value="aryo@example.com"/>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <div class="flex justify-between items-center">
+              <label class="font-semibold text-xs text-on-surface-variant" for="loginPassword">Password</label>
+              <a class="font-semibold text-xs text-primary hover:underline" href="#">Lupa password?</a>
+            </div>
+            <div class="relative group">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">lock</span>
+              <input class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none text-sm" id="loginPassword" placeholder="••••••••" type="password" value="password123"/>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <input class="w-4 h-4 rounded border-outline text-primary focus:ring-primary" id="remember" type="checkbox" checked/>
+            <label class="font-semibold text-xs text-on-surface-variant" for="remember">Ingat saya selama 30 hari</label>
+          </div>
+          <button class="w-full py-3.5 bg-primary hover:bg-primary/90 text-on-primary font-bold text-sm rounded-xl transition-all shadow-lg active:scale-95 flex justify-center items-center gap-2" type="submit">
+            Masuk <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          </button>
+        </form>
+
+        <div class="my-6 flex items-center gap-4">
+          <hr class="flex-grow border-outline-variant"/><span class="text-xs text-outline font-semibold">ATAU LANJUT DENGAN</span><hr class="flex-grow border-outline-variant"/>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="handleLogin(null)" class="flex items-center justify-center gap-2 py-2.5 px-4 border border-outline rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors font-semibold text-sm text-on-surface">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google
+          </button>
+          <button onclick="showToast('SSO login segera tersedia!')" class="flex items-center justify-center gap-2 py-2.5 px-4 border border-outline rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors font-semibold text-sm text-on-surface">
+            <span class="material-symbols-outlined text-secondary mat-fill">account_circle</span> SSO
+          </button>
+        </div>
+        <p class="mt-6 text-center text-sm text-on-surface-variant">
+          Belum punya akun? <button onclick="navigateTo('register')" class="font-bold text-primary hover:underline">Buat akun</button>
+        </p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ===== PAGE: REGISTER ===== -->
+<div class="page" id="page-register">
+  <div class="min-h-screen flex flex-col md:flex-row pt-14">
+    <!-- Left Panel -->
+    <aside class="hidden md:flex w-1/2 relative flex-col justify-between p-16 bg-primary text-on-primary overflow-hidden">
+      <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image:radial-gradient(circle at 2px 2px,rgba(255,255,255,0.2) 1px,transparent 0);background-size:32px 32px"></div>
+      <div class="relative z-10">
+        <div class="mb-10">
+          <div class="w-14 h-14 rounded-full bg-primary-fixed flex items-center justify-center mb-4">
+            <span class="material-symbols-outlined text-primary text-2xl mat-fill">directions_bike</span>
+          </div>
+          <span class="font-bold text-xl">Summarecon EcoRide</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">Bergabunglah dengan Gerakan Hijau di Summarecon Bekasi.</h1>
+        <p class="text-base opacity-80 max-w-md">Nikmati mobilitas perkotaan yang mulus sembari berkontribusi untuk masa depan yang lebih bersih.</p>
+      </div>
+      <div class="relative z-10 space-y-3">
+        <div class="flex items-center gap-4 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
+          <div class="h-10 w-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary flex-shrink-0">
+            <span class="material-symbols-outlined mat-fill text-sm">eco</span>
+          </div>
+          <div><p class="font-bold text-sm">Perjalanan Tanpa Emisi</p><p class="text-xs opacity-70">100% Listrik, 0% Jejak Karbon.</p></div>
+        </div>
+        <div class="flex items-center gap-4 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
+          <div class="h-10 w-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary flex-shrink-0">
+            <span class="material-symbols-outlined mat-fill text-sm">recycling</span>
+          </div>
+          <div><p class="font-bold text-sm">Rewards Daur Ulang</p><p class="text-xs opacity-70">Ubah sampahmu jadi kredit perjalanan.</p></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Form -->
+    <main class="flex-1 flex flex-col justify-center items-center p-5 md:p-16 bg-surface-container-lowest">
+      <div class="md:hidden mb-8 flex flex-col items-center">
+        <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center mb-2">
+          <span class="material-symbols-outlined text-white mat-fill">directions_bike</span>
+        </div>
+        <h2 class="font-bold text-lg text-primary">Summarecon EcoRide</h2>
+      </div>
+      <div class="w-full max-w-md">
+        <header class="mb-8">
+          <h2 class="text-2xl md:text-3xl font-bold text-primary mb-1">Buat Akun</h2>
+          <p class="text-on-surface-variant text-sm">Mulailah perjalanan berkelanjutanmu hari ini.</p>
+        </header>
+        <form class="space-y-3" onsubmit="handleRegister(event)">
+          <div class="space-y-1">
+            <label class="font-semibold text-xs text-on-surface" for="regName">Nama Lengkap</label>
+            <input class="w-full px-4 py-3 bg-surface border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-outline text-sm" id="regName" placeholder="John Doe" type="text"/>
+          </div>
+          <div class="space-y-1">
+            <label class="font-semibold text-xs text-on-surface" for="regEmail">Alamat Email</label>
+            <input class="w-full px-4 py-3 bg-surface border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-outline text-sm" id="regEmail" placeholder="john@example.com" type="email"/>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="font-semibold text-xs text-on-surface" for="regPhone">No. Telepon</label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-semibold text-sm">+62</span>
+                <input class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-outline text-sm" id="regPhone" placeholder="812 3456 789" type="tel"/>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label class="font-semibold text-xs text-on-surface" for="regPassword">Password</label>
+              <input class="w-full px-4 py-3 bg-surface border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-outline text-sm" id="regPassword" placeholder="••••••••" type="password"/>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 py-2">
+            <input class="mt-1 h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary flex-shrink-0" id="terms" type="checkbox"/>
+            <label class="text-xs text-on-surface-variant leading-relaxed" for="terms">
+              Saya menyetujui <a class="text-primary font-bold hover:underline" href="#">Syarat & Ketentuan</a> dan <a class="text-primary font-bold hover:underline" href="#">Kebijakan Privasi</a> Summarecon EcoRide.
+            </label>
+          </div>
+          <button class="w-full bg-primary text-on-primary font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2 text-sm" type="submit">
+            Daftar Sekarang <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </form>
+        <div class="mt-6 pt-6 border-t border-outline-variant text-center">
+          <p class="text-sm text-on-surface-variant">Sudah punya akun? <button onclick="navigateTo('login')" class="text-primary font-bold hover:underline">Masuk</button></p>
+        </div>
+        <div class="mt-6 grid grid-cols-3 gap-3 opacity-40 hover:opacity-100 transition-all duration-500">
+          <div class="flex flex-col items-center gap-1 text-center">
+            <span class="material-symbols-outlined text-3xl">payments</span>
+            <span class="text-[10px] font-bold uppercase tracking-widest">Pembayaran Aman</span>
+          </div>
+          <div class="flex flex-col items-center gap-1 text-center">
+            <span class="material-symbols-outlined text-3xl">verified_user</span>
+            <span class="text-[10px] font-bold uppercase tracking-widest">Terverifikasi</span>
+          </div>
+          <div class="flex flex-col items-center gap-1 text-center">
+            <span class="material-symbols-outlined text-3xl">support_agent</span>
+            <span class="text-[10px] font-bold uppercase tracking-widest">Bantuan 24/7</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ===== MOBILE BOTTOM NAV ===== -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-[90] flex justify-around items-center px-1 py-2 pb-safe bg-surface-container-lowest border-t border-outline-variant shadow-[0_-4px_16px_rgba(46,125,50,0.08)] rounded-t-2xl" id="mobileNav">
+  <button onclick="navigateTo('home')" class="mobile-nav-btn flex flex-col items-center justify-center px-4 py-1.5 rounded-full transition-all" data-page="home">
+    <span class="material-symbols-outlined" data-icon-name="home">home</span>
+    <span class="text-[11px] font-semibold">Home</span>
+  </button>
+  <button onclick="navigateTo('explore')" class="mobile-nav-btn flex flex-col items-center justify-center px-4 py-1.5 rounded-full transition-all" data-page="explore">
+    <span class="material-symbols-outlined" data-icon-name="directions_bike">directions_bike</span>
+    <span class="text-[11px] font-semibold">Explore</span>
+  </button>
+  <button onclick="navigateTo('recycle')" class="mobile-nav-btn flex flex-col items-center justify-center px-4 py-1.5 rounded-full transition-all" data-page="recycle">
+    <span class="material-symbols-outlined" data-icon-name="recycling">recycling</span>
+    <span class="text-[11px] font-semibold">Recycle</span>
+  </button>
+  <button onclick="navigateTo('profile')" class="mobile-nav-btn flex flex-col items-center justify-center px-4 py-1.5 rounded-full transition-all" data-page="profile">
+    <span class="material-symbols-outlined" data-icon-name="person">person</span>
+    <span class="text-[11px] font-semibold">Profil</span>
+  </button>
+</nav>
+
+<!-- ===== MODALS ===== -->
+<!-- Book Ride Modal -->
+<div class="modal-backdrop" id="bookModal">
+  <div class="modal-box">
+    <div class="flex justify-between items-start mb-4">
+      <h2 class="font-bold text-xl text-on-surface" id="bookModalTitle">Pesan Sepeda</h2>
+      <button onclick="closeModal('bookModal')" class="text-outline hover:text-on-surface transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <p class="text-on-surface-variant text-sm mb-5" id="bookModalHub">Summarecon Mall Hub</p>
+    <div class="bg-surface-container rounded-xl p-4 mb-5 space-y-2">
+      <div class="flex justify-between text-sm"><span class="text-on-surface-variant">Tarif</span><span class="font-bold text-on-surface">Rp 500 / menit</span></div>
+      <div class="flex justify-between text-sm"><span class="text-on-surface-variant">Deposit</span><span class="font-bold text-on-surface">Rp 10,000</span></div>
+      <div class="flex justify-between text-sm"><span class="text-on-surface-variant">Saldo Dompet</span><span class="font-bold text-primary">Rp 65,500</span></div>
+    </div>
+    <div class="mb-5">
+      <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant block mb-2">Kode QR Sepeda</label>
+      <div class="border-2 border-dashed border-outline-variant rounded-xl p-6 text-center cursor-pointer hover:border-primary transition-colors" onclick="handleScanQR()">
+        <span class="material-symbols-outlined text-4xl text-outline mb-2 block">qr_code_scanner</span>
+        <p class="text-sm text-on-surface-variant">Tap untuk scan QR di sepeda</p>
+      </div>
+    </div>
+    <button onclick="confirmBooking()" class="w-full bg-primary text-on-primary font-bold py-3.5 rounded-xl active:scale-95 transition-all shadow-md">
+      Konfirmasi Pemesanan
+    </button>
+  </div>
+</div>
+
+<!-- Recycle Scan Modal -->
+<div class="modal-backdrop" id="recycleModal">
+  <div class="modal-box">
+    <div class="flex justify-between items-start mb-4">
+      <h2 class="font-bold text-xl text-on-surface">Scan Bin QR</h2>
+      <button onclick="closeModal('recycleModal')" class="text-outline hover:text-on-surface transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="bg-primary-fixed rounded-xl p-6 text-center mb-5 cursor-pointer" onclick="simulateRecycle()">
+      <span class="material-symbols-outlined text-5xl text-primary block mb-2">qr_code_scanner</span>
+      <p class="text-sm font-semibold text-on-primary-fixed">Arahkan kamera ke QR Code di Bin</p>
+      <p class="text-xs text-on-primary-fixed/70 mt-1">Tap untuk simulasi scan</p>
+    </div>
+    <div class="space-y-2 mb-5">
+      <div class="flex justify-between items-center text-sm"><span class="text-on-surface-variant">Stasiun</span><span class="font-bold">Daur Ulang A - B1</span></div>
+      <div class="flex justify-between items-center text-sm"><span class="text-on-surface-variant">Material Diterima</span><span class="font-bold">PET, HDPE, PP, Al</span></div>
+      <div class="flex justify-between items-center text-sm"><span class="text-on-surface-variant">Kapasitas</span>
+        <div class="flex items-center gap-2"><div class="w-16 h-1.5 bg-surface-variant rounded-full"><div class="h-1.5 bg-tertiary rounded-full" style="width:80%"></div></div><span class="font-bold text-tertiary">80%</span></div>
+      </div>
+    </div>
+    <button onclick="simulateRecycle()" class="w-full bg-primary text-on-primary font-bold py-3.5 rounded-xl active:scale-95 transition-all">
+      Mulai Setor Sampah
+    </button>
+  </div>
+</div>
+
+<!-- Redeem Points Modal -->
+<div class="modal-backdrop" id="redeemModal">
+  <div class="modal-box">
+    <div class="flex justify-between items-start mb-4">
+      <h2 class="font-bold text-xl text-on-surface">Tukar Poin</h2>
+      <button onclick="closeModal('redeemModal')" class="text-outline hover:text-on-surface transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="bg-surface-container rounded-xl p-4 mb-5">
+      <p class="text-xs text-on-surface-variant mb-1">Reward dipilih</p>
+      <p class="font-bold text-lg text-on-surface" id="redeemRewardName">15 Menit Ride</p>
+      <p class="text-primary font-bold" id="redeemPointsCost">50 Poin</p>
+    </div>
+    <div class="flex justify-between items-center mb-5 p-3 bg-primary-fixed rounded-xl">
+      <span class="text-sm font-semibold text-on-primary-fixed">Saldo Poinmu</span>
+      <span class="font-bold text-lg text-on-primary-fixed">12,450 pts</span>
+    </div>
+    <button onclick="confirmRedeem()" class="w-full bg-primary text-on-primary font-bold py-3.5 rounded-xl active:scale-95 transition-all shadow-md">
+      Konfirmasi Penukaran
+    </button>
+  </div>
+</div>
+
+<!-- End Ride Modal -->
+<div class="modal-backdrop" id="endRideModal">
+  <div class="modal-box">
+    <div class="text-center mb-5">
+      <div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center mx-auto mb-4">
+        <span class="material-symbols-outlined text-primary text-3xl mat-fill">check_circle</span>
+      </div>
+      <h2 class="font-bold text-2xl text-on-surface mb-1">Perjalanan Selesai!</h2>
+      <p class="text-on-surface-variant text-sm">Ride #EK-2041 telah berakhir</p>
+    </div>
+    <div class="bg-surface-container rounded-xl p-4 mb-5 space-y-2">
+      <div class="flex justify-between text-sm"><span class="text-on-surface-variant">Jarak Tempuh</span><span class="font-bold">3.2 km</span></div>
+      <div class="flex justify-between text-sm"><span class="text-on-surface-variant">Durasi</span><span class="font-bold" id="endRideDuration">24 menit</span></div>
+      <div class="flex justify-between text-sm"><span class="text-on-surface-variant">Biaya Total</span><span class="font-bold text-on-surface">Rp 12,000</span></div>
+      <div class="flex justify-between text-sm border-t border-outline-variant pt-2 mt-1"><span class="text-primary font-bold">Poin Didapat</span><span class="font-bold text-primary">+24 pts</span></div>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="closeModal('endRideModal')" class="flex-1 border border-outline text-on-surface font-bold py-3 rounded-xl active:scale-95 transition-all text-sm">Tutup</button>
+      <button onclick="closeModal('endRideModal'); navigateTo('recycle')" class="flex-1 bg-primary text-on-primary font-bold py-3 rounded-xl active:scale-95 transition-all text-sm">Daur Ulang Sekarang</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+  // ===== STATE =====
+  let appState = {
+    isLoggedIn: false,
+    currentPage: 'home',
+    rideActive: true,
+    rideSeconds: 1453,
+    selectedHub: null,
+    redeemData: null,
+    notifOpen: false,
+  };
+
+  // ===== NAVIGATION =====
+  function navigateTo(page) {
+    const authRequired = ['profile', 'recycle'];
+    if (authRequired.includes(page) && !appState.isLoggedIn) {
+      showToast('Silakan masuk terlebih dahulu');
+      navigateTo('login');
+      return;
+    }
+
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + page);
+    if (target) {
+      target.classList.add('active');
+      target.classList.add('fade-in');
+      setTimeout(() => target.classList.remove('fade-in'), 400);
+    }
+
+    appState.currentPage = page;
+    updateNavStyles(page);
+    updateHeaderState();
+    window.scrollTo(0, 0);
+
+    // Show/hide mobile nav
+    const mobileNav = document.getElementById('mobileNav');
+    const hideNav = ['login', 'register'];
+    mobileNav.style.display = hideNav.includes(page) ? 'none' : 'flex';
+
+    // Hide header on login/register
+    const header = document.getElementById('globalHeader');
+    const hideHeader = ['login', 'register'];
+    header.style.display = hideHeader.includes(page) ? 'flex' : 'flex';
+    if (hideHeader.includes(page)) {
+      header.style.background = 'rgba(249,249,249,0.95)';
+    } else {
+      header.style.background = '';
+    }
+  }
+
+  function updateNavStyles(page) {
+    // Desktop nav
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      const isActive = btn.dataset.page === page;
+      btn.className = `nav-btn px-3 py-2 rounded-full font-semibold text-sm transition-colors ${isActive ? 'text-primary' : 'text-on-surface-variant hover:bg-surface-container-high'}`;
+    });
+    // Mobile nav
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+      const isActive = btn.dataset.page === page;
+      btn.className = `mobile-nav-btn flex flex-col items-center justify-center px-4 py-1.5 rounded-full transition-all ${isActive ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant'}`;
+    });
+  }
+
+  function updateHeaderState() {
+    const guestEl = document.getElementById('headerGuest');
+    const userEl = document.getElementById('headerUser');
+    const hideNav = ['login', 'register'];
+    const isAuthPage = hideNav.includes(appState.currentPage);
+
+    if (isAuthPage) {
+      guestEl.style.display = 'none';
+      userEl.classList.add('hidden');
+    } else if (appState.isLoggedIn) {
+      guestEl.style.display = 'none';
+      userEl.classList.remove('hidden');
+      userEl.style.display = 'flex';
+    } else {
+      guestEl.style.display = 'block';
+      userEl.classList.add('hidden');
+    }
+  }
+
+  // ===== TOAST =====
+  let toastTimeout;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ===== MODAL =====
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  // Close modal on backdrop click
+  document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) backdrop.classList.remove('open');
+    });
+  });
+
+  // ===== AUTH =====
+  function handleLogin(e) {
+    if (e) e.preventDefault();
+    appState.isLoggedIn = true;
+    showToast('Selamat datang kembali, Aryo! 🌿');
+    navigateTo('home');
+    startRideTimer();
+  }
+
+  function handleRegister(e) {
+    e.preventDefault();
+    const name = document.getElementById('regName').value;
+    if (!name) { showToast('Silakan isi nama lengkap'); return; }
+    const email = document.getElementById('regEmail').value;
+    if (!email) { showToast('Silakan isi alamat email'); return; }
+    appState.isLoggedIn = true;
+    showToast('Akun berhasil dibuat! Selamat bergabung 🎉');
+    navigateTo('home');
+    startRideTimer();
+  }
+
+  function handleLogout() {
+    appState.isLoggedIn = false;
+    showToast('Berhasil keluar. Sampai jumpa!');
+    navigateTo('home');
+  }
+
+  // ===== RIDE =====
+  function startRideTimer() {
+    setInterval(() => {
+      if (appState.rideActive) {
+        appState.rideSeconds++;
+        const min = Math.floor(appState.rideSeconds / 60);
+        const sec = appState.rideSeconds % 60;
+        const timer = document.getElementById('rideTimer');
+        if (timer) timer.textContent = `${min}:${sec.toString().padStart(2,'0')}`;
+        // Update cost
+        const cost = document.getElementById('rideCost');
+        if (cost) cost.textContent = `Rp ${(min * 500).toLocaleString('id-ID')}`;
+      }
+    }, 1000);
+  }
+
+  function handleStartRide() {
+    if (!appState.isLoggedIn) { navigateTo('login'); return; }
+    navigateTo('explore');
+    showToast('Temukan hub terdekat dan pesan sepeda!');
+  }
+
+  function handleEndRide() {
+    openModal('endRideModal');
+    const dur = Math.floor(appState.rideSeconds / 60);
+    const el = document.getElementById('endRideDuration');
+    if (el) el.textContent = `${dur} menit`;
+    appState.rideActive = false;
+  }
+
+  function handleBookNow(hubName) {
+    if (!appState.isLoggedIn) {
+      showToast('Masuk dulu untuk memesan!');
+      navigateTo('login');
+      return;
+    }
+    document.getElementById('bookModalHub').textContent = hubName;
+    document.getElementById('bookModalTitle').textContent = 'Pesan Sepeda';
+    openModal('bookModal');
+  }
+
+  function handleScanQR() { showToast('Kamera dibuka... scan QR di sepeda'); }
+
+  function confirmBooking() {
+    closeModal('bookModal');
+    appState.rideActive = true;
+    showToast('Sepeda berhasil dibuka! Selamat berkendara 🚴');
+    navigateTo('profile');
+  }
+
+  // ===== RECYCLE =====
+  function handleRecycleScan() {
+    if (!appState.isLoggedIn) { navigateTo('login'); return; }
+    openModal('recycleModal');
+  }
+
+  function simulateRecycle() {
+    closeModal('recycleModal');
+    showToast('+510 poin ditambahkan! Terima kasih telah mendaur ulang ♻️');
+  }
+
+  // ===== POINTS =====
+  function handleRedeemPoints(points, reward) {
+    if (!appState.isLoggedIn) { navigateTo('login'); return; }
+    document.getElementById('redeemRewardName').textContent = reward;
+    document.getElementById('redeemPointsCost').textContent = `${points} Poin`;
+    appState.redeemData = { points, reward };
+    openModal('redeemModal');
+  }
+
+  function confirmRedeem() {
+    closeModal('redeemModal');
+    if (appState.redeemData) {
+      showToast(`${appState.redeemData.reward} berhasil ditukar! 🎉`);
+    }
+  }
+
+  // ===== PROMO =====
+  function handleClaimPromo() {
+    if (!appState.isLoggedIn) { navigateTo('login'); return; }
+    showToast('Promo Weekend Warrior berhasil diklaim! 🎊');
+  }
+
+  // ===== EXPLORE =====
+  let currentFilter = 'all';
+  function setExploreFilter(filter) {
+    currentFilter = filter;
+    ['all', 'bike', 'recycle'].forEach(f => {
+      const btn = document.getElementById('filter-' + f);
+      if (f === filter) {
+        btn.className = 'explore-filter px-3 py-1.5 rounded-full text-xs font-semibold bg-primary text-on-primary';
+      } else {
+        btn.className = 'explore-filter px-3 py-1.5 rounded-full text-xs font-semibold bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors';
+      }
+    });
+    filterHubs(document.getElementById('exploreSearch')?.value || '');
+  }
+
+  function filterHubs(query) {
+    const cards = document.querySelectorAll('.hub-card');
+    cards.forEach(card => {
+      const type = card.dataset.type;
+      const text = card.textContent.toLowerCase();
+      const matchType = currentFilter === 'all' || type === currentFilter;
+      const matchQuery = !query || text.includes(query.toLowerCase());
+      card.style.display = matchType && matchQuery ? 'block' : 'none';
+    });
+  }
+
+  function selectHub(el, name) {
+    document.querySelectorAll('.hub-card').forEach(c => {
+      c.classList.remove('border-primary', 'shadow-md');
+      c.classList.add('border-outline-variant');
+    });
+    el.classList.add('border-primary', 'shadow-md');
+    el.classList.remove('border-outline-variant');
+    showToast(`${name} dipilih`);
+  }
+
+  // ===== TOGGLE SWITCH =====
+  function toggleSwitch(wrapper) {
+    if (wrapper.classList.contains('toggle-on')) {
+      wrapper.classList.remove('toggle-on');
+      wrapper.classList.add('toggle-off');
+    } else {
+      wrapper.classList.remove('toggle-off');
+      wrapper.classList.add('toggle-on');
+    }
+  }
+
+  // ===== NOTIFICATIONS =====
+  function toggleNotifPanel() {
+    const panel = document.getElementById('notifPanel');
+    const badge = document.getElementById('notifBadge');
+    appState.notifOpen = !appState.notifOpen;
+    if (appState.notifOpen) {
+      panel.classList.remove('hidden');
+      if (badge) badge.style.display = 'none';
+    } else {
+      panel.classList.add('hidden');
+    }
+  }
+
+  // Close notif panel when clicking outside
+  document.addEventListener('click', (e) => {
+    const panel = document.getElementById('notifPanel');
+    if (appState.notifOpen && !panel.contains(e.target) && !e.target.closest('[onclick="toggleNotifPanel()"]')) {
+      panel.classList.add('hidden');
+      appState.notifOpen = false;
+    }
+  });
+
+  // ===== INIT =====
+  navigateTo('home');
+  startRideTimer();
+</script>
+</body>
+</html>
